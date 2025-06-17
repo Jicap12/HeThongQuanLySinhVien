@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý khóa học</title>
+    <link rel="stylesheet" th:href="@{/css/Index.css}">
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="left-logo">Trường ABC</div>
+        <div class="title">HỆ THỐNG QUẢN LÝ SINH VIÊN</div>
+        <div class="logout"><button>Đăng xuất</button></div>
+    </header>
+
+    <div class="main">
+        <aside class="sidebar">
+            <div class="menu-item-active">
+                <a th:href="@{/dashboard}">📊 Bảng điều khiển</a>
+            </div>
+            <div class="menu-item">
+                <a th:href="@{/course}">📚 Quản lý khóa học</a>
+            </div>
+            <div class="menu-item">
+                <a th:href="@{/class}">🏫 Quản lý lớp học</a>
+            </div>
+            <div class="menu-item">
+                <a th:href="@{/student}">🎓 Quản lý sinh viên</a>
+            </div>
+            <div class="menu-item">
+                <a th:href="@{/account}">👤 Quản lý tài khoản</a>
+            </div>
+        </aside>
+
+        <section class="content">
+            <div class="stats-section">
+                <div class="stat-group">
+                    <h3>Thống kê khóa học</h3>
+                    <p>Tổng số khóa học: <strong th:text="${countCourse}">0</strong></p>
+                    <p>Đang hoạt động: <strong th:text="${courseActive}">10</strong></p>
+                    <p>Đã kết thúc: <strong th:text="${courseEnded}">4</strong></p>
+                </div>
+
+                <div class="stat-group">
+                    <h3>Thống kê lớp học</h3>
+                    <p>Tổng số lớp: <strong th:text="${classCount}">20</strong></p>
+                    <p>Đang hoạt động: <strong th:text="${classActive}">10</strong></p>
+                    <p>Đã kết thúc: <strong th:text="${classEnded}">4</strong></p>
+                    <p>Đang chờ: <strong th:text="${classPending}">6</strong></p>
+                </div>
+
+                <div class="stat-group">
+                    <h3>Thống kê sinh viên</h3>
+                    <p>Tổng số SV: <strong th:text="${studentTotal}">1000</strong></p>
+                    <p>SV chờ lớp: <strong th:text="${studentWaiting}">200</strong></p>
+                    <p>SV đang học: <strong th:text="${studentStudying}">600</strong></p>
+                    <p>SV bảo lưu/đình chỉ: <strong th:text="${studentSuspended}">50</strong></p>
+                    <p>SV tốt nghiệp: <strong th:text="${studentGraduated}">150</strong></p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>Copyright ©2023</p>
+    </footer>
+</div>
+</body>
+</html>
