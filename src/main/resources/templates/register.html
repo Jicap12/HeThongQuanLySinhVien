@@ -8,22 +8,32 @@
 <body>
 <div class="register-container">
     <h1>Đăng ký</h1>
-    <form action="" method="post" th:object="${user}">
+    <form th:action="@{/register}" th:object="${user}" method="post">
         <div>
-            <label for="username">Tên đăng nhập</label>
-            <input type="text" th:field="*{userName}" id="username" />
+            <label>Tên đăng nhập:</label>
+            <input type="text" th:field="*{userName}" />
+            <span th:if="${#fields.hasErrors('userName')}" th:errors="*{userName}">Lỗi</span>
         </div>
         <div>
-            <label for="email">Email</label>
-            <input type="email" th:field="*{email}" id="email" />
+            <label>Email:</label>
+            <input type="email" th:field="*{email}" />
+            <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Lỗi</span>
         </div>
         <div>
-            <label for="password">Mật khẩu</label>
-            <input type="password" th:field="*{password}" id="password" />
+            <label>Mật khẩu:</label>
+            <input type="password" th:field="*{password}" />
+            <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Lỗi</span>
         </div>
-        <button type="submit">Đăng ký</button>
+        <div>
+            <label>Nhập lại mật khẩu:</label>
+            <input type="password" th:field="*{confirmPassword}" />
+            <span th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}">Lỗi</span>
+        </div>
+        <div>
+            <button type="submit">Đăng ký</button>
+        </div>
     </form>
-    <a th:href="@{/}">Bạn đã có tài khoản? Đăng nhập</a>
+    <a th:href="@{/login}">Bạn đã có tài khoản? Đăng nhập</a>
 </div>
 </body>
 </html>

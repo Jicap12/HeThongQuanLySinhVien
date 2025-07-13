@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>Quản lý khóa học</title>
@@ -10,7 +11,11 @@
     <header>
         <div class="left-logo">Trường ABC</div>
         <div class="title">HỆ THỐNG QUẢN LÝ SINH VIÊN</div>
-        <div class="logout"><button>Đăng xuất</button></div>
+        <div class="logout">
+            <form id="logoutForm" th:action="@{/logout}" method="post">
+                <button type="button" onclick="confirmLogout()">🔓 Đăng xuất</button>
+            </form>
+        </div>
     </header>
 
     <div class="main">
@@ -18,16 +23,16 @@
             <div class="menu-item-active">
                 <a th:href="@{/dashboard}">📊 Bảng điều khiển</a>
             </div>
-            <div class="menu-item">
+            <div class="menu-item" sec:authorize="hasAnyAuthority('ROLE_ADMIN','ROLE_SUBADMIN')">
                 <a th:href="@{/course}">📚 Quản lý khóa học</a>
             </div>
-            <div class="menu-item">
+            <div class="menu-item" sec:authorize="hasAnyAuthority('ROLE_ADMIN','ROLE_SUBADMIN')">
                 <a th:href="@{/class}">🏫 Quản lý lớp học</a>
             </div>
-            <div class="menu-item">
+            <div class="menu-item" sec:authorize="hasAnyAuthority('ROLE_ADMIN','ROLE_SUBADMIN')">
                 <a th:href="@{/student}">🎓 Quản lý sinh viên</a>
             </div>
-            <div class="menu-item">
+            <div class="menu-item" sec:authorize="hasAnyAuthority('ROLE_ADMIN','ROLE_SUBADMIN')">
                 <a th:href="@{/account}">👤 Quản lý tài khoản</a>
             </div>
         </aside>
@@ -64,6 +69,7 @@
     <footer>
         <p>Copyright ©2023</p>
     </footer>
+    <script th:src="@{/js/logout.js}"></script>
 </div>
 </body>
 </html>

@@ -10,7 +10,11 @@
     <header>
         <div class="left-logo">Trường ABC</div>
         <div class="title">HỆ THỐNG QUẢN LÝ SINH VIÊN</div>
-        <div class="logout"><button>Đăng xuất</button></div>
+        <div class="logout">
+            <form id="logoutForm" th:action="@{/logout}" method="post">
+                <button type="button" onclick="confirmLogout()">🔓 Đăng xuất</button>
+            </form>
+        </div>
     </header>
 
     <div class="main">
@@ -73,8 +77,7 @@
                     <td th:text="${course.durationHours}"></td>
                     <td th:text="${course.status ? 'Hoạt động':'Không hoạt động'}"></td>
                     <td>
-                        <a href="#"
-                           class="edit"
+                        <a href="#" class="edit"
                            th:attr="data-id=${course.id},
                                     data-code=${course.courseCode},
                                     data-name=${course.courseName},
@@ -84,8 +87,7 @@
                             Chỉnh sửa
                         </a>
 
-                        <a href="#"
-                           class="delete"
+                        <a href="#" class="delete"
                            th:attr="data-id=${course.id},
                                     data-code=${course.courseCode},
                                     data-name=${course.courseName}"
@@ -208,6 +210,7 @@
 </div>
 <script th:src="@{/js/courseModal.js}"></script>
 <script th:src="@{/js/search.js}"></script>
+<script th:src="@{/js/logout.js}"></script>
 
 <script th:inline="javascript">
     window.addEventListener('load', function() {
