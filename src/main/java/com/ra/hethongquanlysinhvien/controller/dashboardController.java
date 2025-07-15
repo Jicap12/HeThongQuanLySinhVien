@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/dashboard")
-public class DashboardController {
+public class tempController {
     @Autowired
     private CourseService courseService;
 
