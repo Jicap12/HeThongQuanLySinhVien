@@ -1,5 +1,6 @@
 package com.ra.hethongquanlysinhvien.controller;
 
+import com.ra.hethongquanlysinhvien.service.ClassService;
 import com.ra.hethongquanlysinhvien.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -12,7 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class DashboardController {
     @Autowired
     private CourseService courseService;
-
+    @Autowired
+    private ClassService classService;
 
 
     //chỗ này truy vấn sql 3 lần ko tối ưu, cần cập nhật dùng @Query để trả về cả ba thống kê cùng lúc qua dto nhanh hơn
@@ -24,6 +26,14 @@ public class DashboardController {
         model.addAttribute("countCourse", countCourse);
         model.addAttribute("courseActive", countActiveCourse);
         model.addAttribute("courseEnded", countEndedCourse);
+        long countClass = classService.getTotalClasses();
+        long countActiveClass = classService.getTotalActiveClasses();
+        long countCompletedClass = classService.getTotalCompletedClasses();
+        long countWaitingClass = classService.getTotalWaitingClasses();
+        model.addAttribute("countClass", countClass);
+        model.addAttribute("classActive", countActiveClass);
+        model.addAttribute("classCompleted", countCompletedClass);
+        model.addAttribute("classWaiting", countWaitingClass);
         return "dashboard";
     }
 }

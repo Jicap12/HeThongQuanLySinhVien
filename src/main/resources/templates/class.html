@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý khóa học</title>
+    <link rel="stylesheet" th:href="@{/css/Index.css}">
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="left-logo">Trường ABC</div>
+        <div class="title">HỆ THỐNG QUẢN LÝ SINH VIÊN</div>
+        <div class="logout">
+            <form id="logoutForm" th:action="@{/logout}" method="post">
+                <button type="button" onclick="confirmLogout()">🔓 Đăng xuất</button>
+            </form>
+        </div>
+    </header>
+
+    <div class="main">
+        <aside class="sidebar">
+            <div class="menu-item">
+                <a th:href="@{/dashboard}">📊 Bảng điều khiển</a>
+            </div>
+            <div class="menu-item">
+                <a th:href="@{/course}">📚 Quản lý khóa học</a>
+            </div>
+            <div class="menu-item-active">
+                <a th:href="@{/class}">🏫 Quản lý lớp học</a>
+            </div>
+            <div class="menu-item">
+                <a th:href="@{/student}">🎓 Quản lý sinh viên</a>
+            </div>
+            <div class="menu-item">
+                <a th:href="@{/account}">👤 Quản lý tài khoản</a>
+            </div>
+        </aside>
+
+        <section class="content">
+            <h2>QUẢN LÝ LỚP HỌC</h2>
+
+            <div class="actions">
+                <button class="add-button" onclick="openAddClassModal()">Thêm mới</button>
+                <form th:action="@{/class}" method="get">
+                    <div class="search-wrapper">
+                        <input type="text" class="search-input" name="keyword" placeholder="Nhập tên lớp học..." th:value="${keyword}" id="searchInput">
+                        <span class="clear-btn" onclick="clearSearch()">X</span>
+                    </div>
+                    <button type="submit" class="search-button">Tìm kiếm</button>
+                    <label>Sắp xếp</label>
+                    <select name="sortBy" th:value="${sortBy}">
+                        <option value="" th:selected="${sortBy == null or sortBy == ''}">Lựa chọn</option>
+                        <option value="className" th:selected="${sortBy == 'className'}">Theo tên</option>
+                        <option value="classCode" th:selected="${sortBy == 'classCode'}">Theo mã</option>
+                    </select>
+                </form>
+            </div>
+
+            <table>
+                <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Mã lớp học</th>
+                    <th>Tên lớp học</th>
+                    <th>Giảng viên</th>
+                    <th>Mô tả</th>
+                    <th>Sĩ số</th>
+                    <th>Trạng thái</th>
+                    <th>Khóa học</th>
+                    <th>Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="classItem,loop : ${classPage.content}">
+                    <td th:text="${loop.count}"></td>
+                    <td th:text="${classItem.classCode}"></td>
+                    <td th:text="${classItem.className}"></td>
+                    <td th:text="${classItem.teacherName}"></td>
+                    <td th:text="${classItem.description}"></td>
+                    <td th:text="${classItem.numberOfStudents}"></td>
+                    <td th:text="${classItem.status.description}"></td>
+                    <td th:text="${classItem.course.courseName}"></td>
+                    <td>
+                        <a href="#" class="edit"
+                           th:attr="data-id=${classItem.id},
+                                    data-code=${classItem.classCode},
+                                    data-name=${classItem.className},
+                                    data-teacher-name=${classItem.teacherName},
+                                    data-description=${classItem.description},
+                                    data-number-of-students=${classItem.numberOfStudents},
+                                    data-status=${classItem.status},
+                                    data-course=${classItem.course.id}"
+                           onclick="handleEditClassClick(this)">
+                            Chỉnh sửa
+                        </a>
+
+                        <a href="#" class="delete"
+                           th:attr="data-id=${classItem.id},
+                                    data-code=${classItem.classCode},
+                                    data-name=${classItem.className}"
+                           onclick="handleDeleteClassClick(this)">
+                            Xóa
+                        </a>
+
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                <a th:if="${classPage.hasPrevious()}"
+                   th:href="@{/class(page=${classPage.number - 1}, keyword=${keyword}, sortBy=${sortBy})}">
+                    Prev
+                </a>
+
+                <a th:each="i : ${#numbers.sequence(0, classPage.totalPages - 1)}"
+                   th:href="@{/class(page=${i}, keyword=${keyword}, sortBy=${sortBy})}"
+                   th:class="${i == classPage.number} ? 'current' : null"
+                   th:text="${i + 1}">
+                </a>
+
+                <a th:if="${classPage.hasNext()}"
+                   th:href="@{/class(page=${classPage.number + 1}, keyword=${keyword}, sortBy=${sortBy})}">
+                    Next
+                </a>
+            </div>
+
+
+        </section>
+    </div>
+
+    <!-- Modal thêm mới lớp học -->
+    <div id="addClassModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModals()">&times;</span>
+            <h3>Thêm mới lớp học</h3>
+            <form th:action="@{/class/add}" method="post" th:object="${classEntity}">
+                <label>Mã lớp học</label>
+                <input type="text" th:field="*{classCode}">
+                <div th:if="${#fields.hasErrors('classCode')}" th:errors="*{classCode}" class="error"></div>
+
+                <label>Tên lớp học</label>
+                <input type="text" th:field="*{className}">
+                <div th:if="${#fields.hasErrors('className')}" th:errors="*{className}" class="error"></div>
+
+                <label>Tên giáo viên</label>
+                <input type="text" th:field="*{teacherName}">
+                <div th:if="${#fields.hasErrors('teacherName')}" th:errors="*{teacherName}" class="error"></div>
+
+                <label>Mô tả chi tiết</label>
+                <textarea th:field="*{description}" rows="4"></textarea>
+                <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="error"></div>
+
+                <label>Sĩ số</label>
+                <input type="number" th:field="*{numberOfStudents}">
+                <div th:if="${#fields.hasErrors('numberOfStudents')}" th:errors="*{numberOfStudents}" class="error"></div>
+
+                <label>Trạng thái</label>
+                <select name="status" th:field="*{status}">
+                    <option th:each="status : ${classStatuses}"
+                            th:value="${status}"
+                            th:text="${status.description}">
+                    </option>
+                </select>
+
+                <label>Khóa học</label>
+                <select name="courseId" th:field="*{course.id}">
+                    <option th:each="course : ${courses}"
+                            th:value="${course.id}"
+                            th:text="${course.courseName}">
+                    </option>
+                </select>
+
+                <div class="form-actions">
+                    <button type="submit" class="save">Lưu</button>
+                    <button type="button" class="cancel" onclick="closeModals()">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal sửa lớp học -->
+    <div id="editClassModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModals()">&times;</span>
+            <h3>Sửa lớp học</h3>
+            <form th:action="@{/class/edit}" method="post" th:object="${classEntity}">
+                <input type="hidden" th:field="*{id}">
+
+                <label>Mã lớp học</label>
+                <input type="text" th:field="*{classCode}">
+                <div th:if="${#fields.hasErrors('classCode')}" th:errors="*{classCode}" class="error"></div>
+
+                <label>Tên lớp học</label>
+                <input type="text" th:field="*{className}">
+                <div th:if="${#fields.hasErrors('className')}" th:errors="*{className}" class="error"></div>
+
+                <label>Tên giáo viên</label>
+                <input type="text" th:field="*{teacherName}">
+                <div th:if="${#fields.hasErrors('teacherName')}" th:errors="*{teacherName}" class="error"></div>
+
+                <label>Mô tả chi tiết</label>
+                <textarea th:field="*{description}" rows="4"></textarea>
+                <div th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="error"></div>
+
+                <label>Sĩ số</label>
+                <input type="number" th:field="*{numberOfStudents}">
+                <div th:if="${#fields.hasErrors('numberOfStudents')}" th:errors="*{numberOfStudents}" class="error"></div>
+
+                <label>Trạng thái</label>
+                <select name="status" th:field="*{status}">
+                    <option th:each="status : ${classStatuses}"
+                            th:value="${status}"
+                            th:text="${status.description}">
+                    </option>
+                </select>
+
+                <label>Khóa học</label>
+                <select name="courseId" th:field="*{course.id}">
+                    <option th:each="course : ${courses}"
+                            th:value="${course.id}"
+                            th:text="${course.courseName}">
+                    </option>
+                </select>
+
+                <div class="form-actions">
+                    <button type="submit" class="save">Lưu</button>
+                    <button type="button" class="cancel" onclick="closeModals()">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal xóa khóa học -->
+    <div id="deleteClassModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModals()">&times;</span>
+            <h3>Xác nhận xóa</h3>
+            <p>Bạn có chắc chắn muốn xóa lớp học <strong id="deleteClassNameDisplay"></strong>?</p>
+            <form th:action="@{/class/delete}" method="post">
+                <input type="hidden" name="id" id="deleteClassId">
+                <div class="form-actions">
+                    <button type="submit" class="delete-confirm">Xóa</button>
+                    <button type="button" class="cancel" onclick="closeModals()">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>Copyright ©2023</p>
+    </footer>
+</div>
+<script th:src="@{/js/index.js}"></script>
+<script th:src="@{/js/classModal.js}"></script>
+<script th:src="@{/js/search.js}"></script>
+<script th:src="@{/js/logout.js}"></script>
+
+<script th:inline="javascript">
+    window.addEventListener('load', function() {
+        const shouldOpenAddClassModal = /*[[${openAddClassModal}]]*/ false;
+        const shouldOpenEditClassModal = /*[[${openEditClassModal}]]*/ false;
+
+        if (shouldOpenAddClassModal) {
+            document.getElementById('addClassModal').style.display = 'block';
+        }
+
+        if (shouldOpenEditClassModal) {
+            document.getElementById('editClassModal').style.display = 'block';
+        }
+    });
+</script>
+
+</body>
+</html>

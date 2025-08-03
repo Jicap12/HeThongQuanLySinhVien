@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CourseServiceImpl implements CourseService {
     @Autowired
@@ -53,4 +55,11 @@ public class CourseServiceImpl implements CourseService {
     public void deleteCourseById(Long id) {
         courseRepository.deleteById(id);
     }
+
+    @Override
+    public List<Course> findAllCourse() {
+        return courseRepository.findAll();
+    }
+
+
 }

@@ -40,7 +40,7 @@
             <h2>QUẢN LÝ KHÓA HỌC</h2>
 
             <div class="actions">
-                <button class="add-button" onclick="openAddModal()">Thêm mới</button>
+                <button class="add-button" onclick="openAddCourseModal()">Thêm mới</button>
                 <form th:action="@{/course}" method="get">
                     <div class="search-wrapper">
                         <input type="text" class="search-input" name="keyword" placeholder="Nhập tên khóa học..." th:value="${keyword}" id="searchInput">
@@ -70,28 +70,28 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="course,loop : ${coursePage.content}">
+                <tr th:each="courseItem,loop : ${coursePage.content}">
                 <td th:text="${loop.count}"></td>
-                    <td th:text="${course.courseCode}"></td>
-                    <td th:text="${course.courseName}"></td>
-                    <td th:text="${course.durationHours}"></td>
-                    <td th:text="${course.status ? 'Hoạt động':'Không hoạt động'}"></td>
+                    <td th:text="${courseItem.courseCode}"></td>
+                    <td th:text="${courseItem.courseName}"></td>
+                    <td th:text="${courseItem.durationHours}"></td>
+                    <td th:text="${courseItem.status ? 'Hoạt động':'Không hoạt động'}"></td>
                     <td>
                         <a href="#" class="edit"
-                           th:attr="data-id=${course.id},
-                                    data-code=${course.courseCode},
-                                    data-name=${course.courseName},
-                                    data-duration=${course.durationHours},
-                                    data-status=${course.status}"
-                           onclick="handleEditClick(this)">
+                           th:attr="data-id=${courseItem.id},
+                                    data-code=${courseItem.courseCode},
+                                    data-name=${courseItem.courseName},
+                                    data-duration=${courseItem.durationHours},
+                                    data-status=${courseItem.status}"
+                           onclick="handleEditCourseClick(this)">
                             Chỉnh sửa
                         </a>
 
                         <a href="#" class="delete"
-                           th:attr="data-id=${course.id},
-                                    data-code=${course.courseCode},
-                                    data-name=${course.courseName}"
-                           onclick="handleDeleteClick(this)">
+                           th:attr="data-id=${courseItem.id},
+                                    data-code=${courseItem.courseCode},
+                                    data-name=${courseItem.courseName}"
+                           onclick="handleDeleteCourseClick(this)">
                             Xóa
                         </a>
 
@@ -123,7 +123,7 @@
     </div>
 
     <!-- Modal thêm mới khóa học -->
-    <div id="addModal" class="modal">
+    <div id="addCourseModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModals()">&times;</span>
             <h3>Thêm mới khóa học</h3>
@@ -155,7 +155,7 @@
     </div>
 
     <!-- Modal sửa khóa học -->
-    <div id="editModal" class="modal">
+    <div id="editCourseModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModals()">&times;</span>
             <h3>Sửa khóa học</h3>
@@ -189,7 +189,7 @@
     </div>
 
     <!-- Modal xóa khóa học -->
-    <div id="deleteModal" class="modal">
+    <div id="deleteCourseModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModals()">&times;</span>
             <h3>Xác nhận xóa</h3>
@@ -208,6 +208,7 @@
         <p>Copyright ©2023</p>
     </footer>
 </div>
+<script th:src="@{/js/index.js}"></script>
 <script th:src="@{/js/courseModal.js}"></script>
 <script th:src="@{/js/search.js}"></script>
 <script th:src="@{/js/logout.js}"></script>
@@ -218,11 +219,11 @@
         const shouldOpenEditModal = /*[[${openEditModal}]]*/ false;
 
         if (shouldOpenAddModal) {
-            document.getElementById('addModal').style.display = 'block';
+            document.getElementById('addCourseModal').style.display = 'block';
         }
 
         if (shouldOpenEditModal) {
-            document.getElementById('editModal').style.display = 'block';
+            document.getElementById('editCourseModal').style.display = 'block';
         }
     });
 </script>
