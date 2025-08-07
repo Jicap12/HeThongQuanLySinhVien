@@ -1,4 +1,5 @@
 function openAddCourseModal() {
+    resetForm('addCourseModal');
     document.getElementById('addCourseModal').style.display = 'block';
 }
 

@@ -2,7 +2,6 @@ package com.ra.hethongquanlysinhvien.controller;
 
 import com.ra.hethongquanlysinhvien.enums.ClassStatus;
 import com.ra.hethongquanlysinhvien.model.entity.ClassEntity;
-import com.ra.hethongquanlysinhvien.model.entity.Course;
 import com.ra.hethongquanlysinhvien.repository.ClassRepository;
 import com.ra.hethongquanlysinhvien.service.ClassService;
 import com.ra.hethongquanlysinhvien.service.CourseService;
@@ -48,6 +47,7 @@ public class ClassController {
 
         return "class";
     }
+
     @PostMapping("/add") // Xử lý khi người dùng submit form thêm mới lớp học
     public String addClass(
             @ModelAttribute("classEntity") @Valid ClassEntity classEntity, // Lấy dữ liệu từ form và kiểm tra validation
@@ -58,6 +58,16 @@ public class ClassController {
             @RequestParam(name = "size", defaultValue = "5") int size,
             @RequestParam(name = "sortBy", defaultValue = "id") String sortBy
     ) {
+
+        // Kiểm tra trùng mã lớp học
+        if (classRepository.existsByClassCode(classEntity.getClassCode())) {
+            result.rejectValue("classCode", "duplicate.classCode", "Mã lớp học đã tồn tại");
+        }
+        // Kiểm tra trùng tên lớp học
+        if (classRepository.existsByClassName(classEntity.getClassName())) {
+            result.rejectValue("className", "duplicate.className", "Tên lớp học đã tồn tại");
+        }
+
         // Nếu có lỗi trong form (ví dụ thiếu tên lớp, sai định dạng, v.v.)
         if (result.hasErrors()) {
             // Load lại danh sách lớp (phân trang) để hiển thị trong view
@@ -89,7 +99,7 @@ public class ClassController {
                             @RequestParam(name = "keyword", required = false) String keyword,
                             @RequestParam(name = "page", defaultValue = "0") int page,
                             @RequestParam(name = "size", defaultValue = "5") int size,
-                            @RequestParam(name = "sortBy", defaultValue = "id") String sortBy){
+                            @RequestParam(name = "sortBy", defaultValue = "id") String sortBy) {
         ClassEntity existingClass = classRepository.findById(id).orElse(null);
 
         if (existingClass == null) {
@@ -142,48 +152,4 @@ public class ClassController {
         classService.deleteClassById(id);
         return "redirect:/class";
     }
-
-    }
-
-
-
-
-
-//    @PostMapping("/edit")
-//    public String editClass(
-//            @ModelAttribute("classEntity") @Valid ClassEntity classEntity,
-//            BindingResult result,
-//            Model model,
-//            @RequestParam(name = "keyword", required = false) String keyword,
-//            @RequestParam(name = "page", defaultValue = "0") int page,
-//            @RequestParam(name = "size", defaultValue = "5") int size,
-//            @RequestParam(name = "sortBy", defaultValue = "id") String sortBy
-//    ) {
-//        if (result.hasErrors()) {
-//            // Load lại danh sách để hiển thị
-//            Page<ClassEntity> classPage = classService.showListClass(keyword, page, size, sortBy);
-//            model.addAttribute("classPage", classPage);
-//            model.addAttribute("currentPage", page);
-//            model.addAttribute("totalPages", classPage.getTotalPages());
-//            model.addAttribute("keyword", keyword);
-//            model.addAttribute("sortBy", sortBy);
-//            model.addAttribute("classStatuses", ClassStatus.values());
-//            model.addAttribute("courses", courseService.findAllCourse());
-//
-//            // Đánh dấu để mở modal edit với dữ liệu lỗi
-//            model.addAttribute("openEditClassModal", true);
-//            return "class";
-//        }
-//
-//        // Lưu thông tin đã chỉnh sửa
-//        classService.saveOrUpdateClass(classEntity);
-//        return "redirect:/class";
-//    }
-//
-//    // Thêm method xử lý POST cho xóa lớp học
-//    @PostMapping("/delete")
-//    public String deleteClass(@RequestParam("id") Long id) {
-//        classService.deleteClassById(id);
-//        return "redirect:/class";
-//    }
-
+}

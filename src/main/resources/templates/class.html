@@ -185,6 +185,7 @@
             <span class="close" onclick="closeModals()">&times;</span>
             <h3>Sửa lớp học</h3>
             <form th:action="@{/class/edit}" method="post" th:object="${classEntity}">
+
                 <input type="hidden" th:field="*{id}">
 
                 <label>Mã lớp học</label>

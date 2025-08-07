@@ -1,4 +1,5 @@
 function openAddClassModal() {
+    resetForm('addClassModal');
     document.getElementById('addClassModal').style.display = 'block';
 }
 

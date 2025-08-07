@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface ClassRepository extends JpaRepository<ClassEntity, Long>, JpaSpecificationExecutor<ClassEntity> {
     long countClassByStatus(ClassStatus status);
-    Page<ClassEntity> findByClassNameContainingIgnoreCase(String keyword, Pageable pageable);
+//    Page<ClassEntity> findByClassNameContainingIgnoreCase(String keyword, Pageable pageable);
 
     boolean existsByClassCode(String classCode);
     boolean existsByClassName(String className);

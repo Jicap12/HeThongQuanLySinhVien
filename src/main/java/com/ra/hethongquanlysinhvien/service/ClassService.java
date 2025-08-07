@@ -14,5 +14,5 @@ public interface ClassService {
     Page<ClassEntity> showListClass(String keyword, int page, int size, String sortBy);
     ClassEntity saveOrUpdateClass(ClassEntity classEntity);
     void deleteClassById(Long id);
-    public List<ClassEntity> findAllClass();
+    List<ClassEntity> findAllClass();
 }
