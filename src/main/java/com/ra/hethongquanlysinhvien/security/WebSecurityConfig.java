@@ -31,10 +31,11 @@ public class WebSecurityConfig {
                         .requestMatchers("/login", "/register", "/css/**", "/js/**").permitAll()
 
                         // Chỉ user đăng nhập mới vào được /dashboard
-                        .requestMatchers("/dashboard").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN", "ROLE_SUBADMIN")
+                        .requestMatchers("/dashboard").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN", "ROLE_SUB_ADMIN")
 
                         // Chỉ ROLE_ADMIN được phép truy cập trang admin
-                        .requestMatchers("/course/**").hasAnyAuthority("ROLE_ADMIN","ROLE_SUBADMIN")
+                        .requestMatchers("/course/**", "/class/**", "/student/**").hasAnyAuthority("ROLE_ADMIN","ROLE_SUB_ADMIN","ROLE_TEACHER")
+                        .requestMatchers("/account/**").hasAnyAuthority("ROLE_ADMIN","ROLE_SUB_ADMIN")
 
                         // Các yêu cầu khác cũng cần xác thực
                         .anyRequest().authenticated()

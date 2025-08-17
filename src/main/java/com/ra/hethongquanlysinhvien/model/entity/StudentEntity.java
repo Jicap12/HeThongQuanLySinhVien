@@ -46,12 +46,6 @@ public class StudentEntity {
     @Column(name = "address", nullable = false)
     private String address;
 
-    // Email: duy nhất, không rỗng, có kiểm tra định dạng
-    @Email(message = "Email không hợp lệ")
-    @NotBlank(message = "Email không được để trống")
-    @Column(name = "email", nullable = false, unique = true)
-    private String email;
-
     @Column(name = "phone")
     private String phone;
 
@@ -60,8 +54,13 @@ public class StudentEntity {
     @Column(name = "status", nullable = false)
     private StudentStatus status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) //Tránh truy xuất toàn bộ dữ liệu lớp học khi không cần thiết
     @JoinColumn(name = "class_id", nullable = false)
     private ClassEntity classEntity;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", unique = true)  // khóa ngoại, đảm bảo 1-1
+    private User user;
+
 }
 

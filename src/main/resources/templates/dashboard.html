@@ -56,12 +56,12 @@
 
                 <div class="stat-group">
                     <h3>Thống kê sinh viên</h3>
-                    <p>Tổng số SV: <strong th:text="${studentTotal}">0</strong></p>
-                    <p>SV chờ lớp: <strong th:text="${studentWaiting}">0</strong></p>
-                    <p>SV đang học: <strong th:text="${studentStudying}">0</strong></p>
-                    <p>SV bảo lưu: <strong th:text="${studentSuspended}">0</strong></p>
-                    <p>SV đình chỉ: <strong th:text="${studentSuspended}">0</strong></p>
-                    <p>SV tốt nghiệp: <strong th:text="${studentGraduated}">0</strong></p>
+                    <p>Tổng số SV: <strong th:text="${countStudent}">0</strong></p>
+                    <p>SV chờ lớp: <strong th:text="${countStudentsWaitingForClass}">0</strong></p>
+                    <p>SV đang học: <strong th:text="${countStudentsStudying}">0</strong></p>
+                    <p>SV bảo lưu: <strong th:text="${countStudentsDeferred}">0</strong></p>
+                    <p>SV đình chỉ: <strong th:text="${countStudentsSuspended}">0</strong></p>
+                    <p>SV tốt nghiệp: <strong th:text="${countStudentsGraduated}">0</strong></p>
                 </div>
             </div>
         </section>

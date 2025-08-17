@@ -1,5 +1,8 @@
 package com.ra.hethongquanlysinhvien.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum ClassStatus {
     WAITING("Chờ lớp"),
     ACTIVE("Đang hoạt động"),
@@ -12,8 +15,5 @@ public enum ClassStatus {
         this.description = description;
     }
 
-    public String getDescription() {
-        return description;
-    }
 }
 

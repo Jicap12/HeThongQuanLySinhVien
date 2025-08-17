@@ -46,7 +46,7 @@ public class CourseController {
                             BindingResult result,
                             Model model,
                             @RequestParam(defaultValue = "") String keyword,
-                            @RequestParam(defaultValue = "0") int page,
+                             @RequestParam(defaultValue = "0") int page,
                             @RequestParam(defaultValue = "5") int size,
                             @RequestParam(defaultValue = "id") String sortBy) {
 

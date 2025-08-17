@@ -14,7 +14,16 @@ public interface StudentService {
     long getTotalStudentsGraduated();
 
     Page<StudentEntity> showListStudent(String keyword, int page, int size, String sortBy);
-    StudentEntity saveOrUpdateStudent(StudentEntity studentEntity);
+
+    void saveAddStudent(StudentEntity studentEntity);
+
+    void saveUpdateStudent(StudentEntity studentEntity);
+
     void deleteStudentById(Long id);
+
+    StudentEntity findStudentById(Long id);
+
+    boolean existsByStudentCode(String studentCode);
+
     List<StudentEntity> findAllStudent();
 }

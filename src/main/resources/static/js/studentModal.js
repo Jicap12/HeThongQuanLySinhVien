@@ -1,5 +1,9 @@
-function openAddStudentModal() {
+function openAddStudentModal(element) {
     resetForm('addStudentModal');
+    const userId = element.getAttribute('data-user-id') || '';
+    const userEmail = element.getAttribute('data-user-email') || '';
+    document.getElementById('studentEmail').value = userEmail;
+    document.getElementById('studentUserId').value = userId;
     document.getElementById('addStudentModal').style.display = 'block';
 }
 

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý sinh viên</title>
+    <link rel="stylesheet" th:href="@{/css/Index.css}">
+</head>
+<body>
+<div class="container">
+    <header>
+        <div class="left-logo">Trường ABC</div>
+        <div class="title">HỆ THỐNG QUẢN LÝ SINH VIÊN</div>
+        <div class="logout">
+            <form id="logoutForm" th:action="@{/logout}" method="post">
+                <button type="button" onclick="confirmLogout()">🔓 Đăng xuất</button>
+            </form>
+        </div>
+    </header>
+
+    <div class="main">
+        <aside class="sidebar">
+            <div class="menu-item"><a th:href="@{/dashboard}">📊 Bảng điều khiển</a></div>
+            <div class="menu-item"><a th:href="@{/course}">📚 Quản lý khóa học</a></div>
+            <div class="menu-item"><a th:href="@{/class}">🏫 Quản lý lớp học</a></div>
+            <div class="menu-item-active"><a th:href="@{/student}">🎓 Quản lý sinh viên</a></div>
+            <div class="menu-item"><a th:href="@{/account}">👤 Quản lý tài khoản</a></div>
+        </aside>
+
+        <section class="content">
+            <h2>QUẢN LÝ SINH VIÊN</h2>
+
+            <div class="actions">
+                <form th:action="@{/student/available}" method="get">
+                    <div class="search-wrapper">
+                        <label for="searchInput"></label><input type="text" class="search-input" name="keyword" placeholder="Nhập từ tìm kiếm..." th:value="${keyword}" id="searchInput">
+                        <span class="clear-btn" onclick="clearSearch()">X</span>
+                    </div>
+                    <button type="submit" class="search-button">Tìm kiếm</button>
+                    <label>Sắp xếp</label>
+                    <label>
+                        <select name="sortBy" th:value="${sortBy}">
+                            <option value="userName" th:selected="${sortBy == 'userName'}">Theo tên</option>
+                            <option value="email" th:selected="${sortBy == 'email'}">Theo email</option>
+                        </select>
+                    </label>
+                </form>
+            </div>
+
+            <table>
+                <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Tên đăng nhập</th>
+                    <th>Email</th>
+                    <th>Lựa chọn</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="userItem,loop : ${userPage.content}">
+                    <td th:text="${loop.count}"></td>
+                    <td th:text="${userItem.userName}"></td>
+                    <td th:text="${userItem.email}"></td>
+                    <td>
+                        <a href="#" class="edit"
+                           th:attr="data-user-id=${userItem.id}, data-user-email=${userItem.email}"
+                           onclick="openAddStudentModal(this)">
+                            Chọn
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                <a th:if="${userPage.hasPrevious()}"
+                   th:href="@{/student(page=${userPage.number - 1}, keyword=${keyword}, sortBy=${sortBy})}">
+                    Prev
+                </a>
+                <a th:each="i : ${#numbers.sequence(0, userPage.totalPages - 1)}"
+                   th:href="@{/student(page=${i}, keyword=${keyword}, sortBy=${sortBy})}"
+                   th:class="${i == userPage.number} ? 'current' : null"
+                   th:text="${i + 1}">
+                </a>
+                <a th:if="${userPage.hasNext()}"
+                   th:href="@{/student(page=${userPage.number + 1}, keyword=${keyword}, sortBy=${sortBy})}">
+                    Next
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal thêm mới học viên -->
+    <div id="addStudentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModals()">&times;</span>
+            <h3>Thêm mới học viên</h3>
+            <form th:action="@{/student/add}" method="post" th:object="${studentEntity}">
+
+                <label>Mã sinh viên</label>
+                <input type="text" th:field="*{studentCode}">
+                <div th:if="${#fields.hasErrors('studentCode')}" th:errors="*{studentCode}" class="error"></div>
+
+                <label>Họ và tên</label>
+                <input type="text" th:field="*{studentName}">
+                <div th:if="${#fields.hasErrors('studentName')}" th:errors="*{studentName}" class="error"></div>
+
+                <label>Ngày sinh</label>
+                <input type="date" th:field="*{dateOfBirth}">
+                <div th:if="${#fields.hasErrors('dateOfBirth')}" th:errors="*{dateOfBirth}" class="error"></div>
+
+                <label>Giới tính</label>
+                <select name="gender" th:field="*{gender}">
+                    <option value="true">Nam</option>
+                    <option value="false">Nữ</option>
+                </select>
+
+                <label>Địa chỉ</label>
+                <input type="text" th:field="*{address}">
+                <div th:if="${#fields.hasErrors('address')}" th:errors="*{address}" class="error"></div>
+
+                <label>Email</label>
+                <input type="email" id="studentEmail" readonly>
+                <input type="hidden" name="userId" id="studentUserId">
+
+                <label>Số điện thoại</label>
+                <input type="text" th:field="*{phone}">
+                <div th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}" class="error"></div>
+
+                <label>Trạng thái</label>
+                <select name="status" th:field="*{status}">
+                    <option th:each="status : ${studentStatuses}"
+                            th:value="${status}"
+                            th:text="${status.description}">
+                    </option>
+                </select>
+
+                <label>Lớp học</label>
+                <select name="classId" th:field="*{classEntity.id}">
+                    <option th:each="classItem : ${classes}"
+                            th:value="${classItem.id}"
+                            th:text="${classItem.className}">
+                    </option>
+                </select>
+
+                <div class="form-actions">
+                    <button type="submit" class="save">Lưu</button>
+                    <button type="button" class="cancel" onclick="closeModals()">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <footer>
+        <p>Copyright ©2023</p>
+    </footer>
+</div>
+<script th:src="@{/js/index.js}"></script>
+<script th:src="@{/js/studentModal.js}"></script>
+<script th:src="@{/js/search.js}"></script>
+<script th:src="@{/js/logout.js}"></script>
+
+<script th:inline="javascript">
+    window.addEventListener('load', function() {
+        const shouldOpenAddStudentModal = /*[[${openAddStudentModal}]]*/ false;
+
+        if (shouldOpenAddStudentModal) {
+            document.getElementById('addStudentModal').style.display = 'block';
+        }
+    });
+</script>
+</body>
+</html>

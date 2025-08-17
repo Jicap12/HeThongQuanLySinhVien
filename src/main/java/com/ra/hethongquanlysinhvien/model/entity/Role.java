@@ -1,5 +1,6 @@
 package com.ra.hethongquanlysinhvien.model.entity;
 
+import com.ra.hethongquanlysinhvien.enums.RoleList;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,6 +17,8 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Enumerated(EnumType.STRING) // Lưu dạng text: ADMIN, STUDENT, TEACHER...
     @Column(name = "name", nullable = false, unique = true)
-    private String roleName;
+    private RoleList roleName;
 }

@@ -22,7 +22,7 @@ public class UserDetailService implements UserDetailsService {
         userPrinciple.setUser(user.orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username)));
         userPrinciple.setAuthorities(user.get().getRoles().
                 stream().map(role ->
-                        new SimpleGrantedAuthority(role.getRoleName())).collect(Collectors.toSet()));
+                        new SimpleGrantedAuthority(role.getRoleName().name())).collect(Collectors.toSet()));
         return userPrinciple;
     }
 }
