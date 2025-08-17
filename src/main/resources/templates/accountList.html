@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý tài khoản</title>
+    <link rel="stylesheet" th:href="@{/css/Index.css}">
+</head>
+<body>
+<div class="container">
+    <!-- HEADER -->
+    <header>
+        <div class="left-logo">Trường ABC</div>
+        <div class="title">HỆ THỐNG QUẢN LÝ SINH VIÊN</div>
+        <div class="logout">
+            <form id="logoutForm" th:action="@{/logout}" method="post">
+                <button type="button" onclick="confirmLogout()">🔓 Đăng xuất</button>
+            </form>
+        </div>
+    </header>
+
+    <div class="main">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="menu-item"><a th:href="@{/dashboard}">📊 Bảng điều khiển</a></div>
+            <div class="menu-item"><a th:href="@{/course}">📚 Quản lý khóa học</a></div>
+            <div class="menu-item"><a th:href="@{/class}">🏫 Quản lý lớp học</a></div>
+            <div class="menu-item"><a th:href="@{/student}">🎓 Quản lý sinh viên</a></div>
+            <div class="menu-item-active"><a th:href="@{/account}">👤 Quản lý tài khoản</a></div>
+        </aside>
+
+        <!-- CONTENT -->
+        <section class="content">
+            <h2>QUẢN LÝ NGƯỜI DÙNG</h2>
+
+            <!-- Tìm kiếm + Sắp xếp -->
+            <div class="actions">
+                <form th:action="@{/account}" method="get">
+                    <div class="search-wrapper">
+                        <input type="text" class="search-input" name="keyword"
+                               placeholder="Nhập từ tìm kiếm..."
+                               th:value="${keyword}">
+                        <span class="clear-btn" onclick="clearSearch()">X</span>
+                    </div>
+                    <button type="submit" class="search-button">Tìm kiếm</button>
+
+                    <label for="sortBy">Sắp xếp</label>
+                    <select id="sortBy" name="sortBy" th:value="${sortBy}">
+                        <option value="userName" th:selected="${sortBy == 'userName'}">Theo tên</option>
+                        <option value="email" th:selected="${sortBy == 'email'}">Theo email</option>
+                    </select>
+                </form>
+            </div>
+
+            <!-- Bảng danh sách user -->
+            <table>
+                <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Tên đăng nhập</th>
+                    <th>Email</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="userItem, loop : ${usersPage.content}">
+                    <td th:text="${loop.count}"></td>
+                    <td th:text="${userItem.userName}"></td>
+                    <td th:text="${userItem.email}"></td>
+                    <td th:text="${userItem.status ? 'Hoạt động' : 'Bị khóa'}"></td>
+                    <td>
+                        <!-- Link Khóa -->
+                        <a href="#" class="block"
+                           th:if="${userItem.status}"
+                           th:attr="data-id=${userItem.id}, data-name=${userItem.userName}"
+                           onclick="openBlockModal(this)">
+                            Khóa tài khoản
+                        </a>
+
+                        <!-- Link Mở khóa -->
+                        <a href="#" class="unblock"
+                           th:if="${!userItem.status}"
+                           th:attr="data-id=${userItem.id}, data-name=${userItem.userName}"
+                           onclick="openUnblockModal(this)">
+                            Mở khóa tài khoản
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- PHÂN TRANG -->
+            <div class="pagination">
+                <a th:if="${usersPage.hasPrevious()}"
+                   th:href="@{/account(page=${usersPage.number - 1}, keyword=${keyword}, sortBy=${sortBy})}">
+                    Prev
+                </a>
+
+                <a th:each="i : ${#numbers.sequence(0, usersPage.totalPages - 1)}"
+                   th:href="@{/account(page=${i}, keyword=${keyword}, sortBy=${sortBy})}"
+                   th:classappend="${i == usersPage.number} ? ' current' : ''"
+                   th:text="${i + 1}">
+                </a>
+
+                <a th:if="${usersPage.hasNext()}"
+                   th:href="@{/account(page=${usersPage.number + 1}, keyword=${keyword}, sortBy=${sortBy})}">
+                    Next
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <!-- MODAL KHÓA USER -->
+    <div id="blockUserModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModals()">&times;</span>
+            <h3>Xác nhận khóa user</h3>
+            <p>Bạn có chắc chắn muốn khóa tài khoản <strong id="blockUserNameDisplay"></strong>?</p>
+            <form th:action="@{/account/block}" method="post">
+                <input type="hidden" name="id" id="blockUserId">
+                <div class="form-actions">
+                    <button type="submit" class="delete-confirm">Khóa</button>
+                    <button type="button" class="cancel" onclick="closeModals()">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL MỞ KHÓA USER -->
+    <div id="unblockUserModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModals()">&times;</span>
+            <h3>Xác nhận mở khóa user</h3>
+            <p>Bạn có chắc chắn muốn mở khóa tài khoản <strong id="unblockUserNameDisplay"></strong>?</p>
+            <form th:action="@{/account/unblock}" method="post">
+                <input type="hidden" name="id" id="unblockUserId">
+                <div class="form-actions">
+                    <button type="submit" class="delete-confirm">Mở khóa</button>
+                    <button type="button" class="cancel" onclick="closeModals()">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>Copyright ©2023</p>
+    </footer>
+</div>
+
+<script th:src="@{/js/index.js}"></script>
+<script th:src="@{/js/accountModal.js}"></script>
+<script th:src="@{/js/search.js}"></script>
+<script th:src="@{/js/logout.js}"></script>
+</body>
+</html>

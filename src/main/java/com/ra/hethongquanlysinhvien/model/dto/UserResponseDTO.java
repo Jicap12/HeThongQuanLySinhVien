@@ -9,8 +9,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class UserAvailableUserDto {
+public class UserResponseDTO {
+    private Long id;
     private String userName;
     private String email;
-    private Boolean status;
+    private boolean status;
 }

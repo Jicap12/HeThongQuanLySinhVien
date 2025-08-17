@@ -1,7 +1,7 @@
 
 // Đóng modal
 function closeModals() {
-    const modals = ['addCourseModal', 'editCourseModal', 'deleteCourseModal','addClassModal', 'editClassModal', 'deleteClassModal', 'addStudentModal', 'editStudentModal', 'deleteStudentModal'];
+    const modals = ['addCourseModal', 'editCourseModal', 'deleteCourseModal','addClassModal', 'editClassModal', 'deleteClassModal', 'addStudentModal', 'editStudentModal', 'deleteStudentModal', 'blockUserModal', 'unblockUserModal'];
     modals.forEach(id => {
         const modal = document.getElementById(id);
         if (modal) {
@@ -13,7 +13,7 @@ function closeModals() {
 
 // Đóng modal khi click bên ngoài
 window.onclick = function(event) {
-    const modals = ['addCourseModal', 'editCourseModal', 'deleteCourseModal','addClassModal', 'editClassModal', 'deleteClassModal', 'addStudentModal', 'editStudentModal', 'deleteStudentModal'];
+    const modals = ['addCourseModal', 'editCourseModal', 'deleteCourseModal','addClassModal', 'editClassModal', 'deleteClassModal', 'addStudentModal', 'editStudentModal', 'deleteStudentModal', 'blockUserModal', 'unblockUserModal'];
     modals.forEach(id => {
         const modal = document.getElementById(id);
         if (event.target === modal) {

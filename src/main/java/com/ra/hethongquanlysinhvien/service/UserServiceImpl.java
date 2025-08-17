@@ -1,11 +1,13 @@
 package com.ra.hethongquanlysinhvien.service;
 
 import com.ra.hethongquanlysinhvien.enums.RoleList;
+import com.ra.hethongquanlysinhvien.model.dto.UserResponseDTO;
 import com.ra.hethongquanlysinhvien.model.dto.UserRegisterDto;
 import com.ra.hethongquanlysinhvien.model.entity.Role;
 import com.ra.hethongquanlysinhvien.model.entity.User;
 import com.ra.hethongquanlysinhvien.repository.RoleRepository;
 import com.ra.hethongquanlysinhvien.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -71,5 +74,49 @@ public class UserServiceImpl implements UserService {
     public Optional<User> findById(Long id) {
         return userRepository.findById(id);
     }
+
+    @Override
+    public Page<UserResponseDTO> showListUser(String keyword, int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
+
+        // Nếu có keyword thì dùng JPQL query
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            return userRepository.findAllUser(keyword.trim(), pageable)
+                    .map(user -> new UserResponseDTO(
+                            user.getId(),
+                            user.getUserName(),
+                            user.getEmail(),
+                            user.isStatus()
+                    ));
+        }
+
+        // Nếu không có keyword thì lấy tất cả bằng Specification
+        return userRepository.findAll((root, query, cb) -> cb.conjunction(), pageable)
+                .map(user -> new UserResponseDTO(
+                        user.getId(),
+                        user.getUserName(),
+                        user.getEmail(),
+                        user.isStatus()
+                ));
+    }
+
+    @Override
+    @Transactional
+    public void blockUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User với ID: " + id + " không tồn tại"));
+
+        user.setStatus(false);
+    }
+
+    @Override
+    public void unblockUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User với ID: " + id + " không tồn tại"));
+
+        user.setStatus(true);
+        userRepository.save(user);
+    }
+
 
 }

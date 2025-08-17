@@ -315,7 +315,8 @@ tbody tr:hover {
     transition: background-color 0.3s ease;
 }
 
-.edit {
+.edit,
+.unblock {
     color: var(--main-blue);
     text-decoration: none;
     font-weight: 500;
@@ -330,7 +331,13 @@ tbody tr:hover {
     color: var(--white);
 }
 
-.delete {
+.unblock:hover {
+    background-color: var(--main-blue);
+    color: var(--white);
+}
+
+.delete,
+.block{
     color: #dc3545;
     text-decoration: none;
     font-weight: 500;
@@ -340,6 +347,11 @@ tbody tr:hover {
 }
 
 .delete:hover {
+    background-color: #dc3545;
+    color: var(--white);
+}
+
+.block:hover {
     background-color: #dc3545;
     color: var(--white);
 }
